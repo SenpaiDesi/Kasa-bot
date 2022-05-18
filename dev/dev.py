@@ -53,6 +53,12 @@ class dev(commands.Cog):
             return await msg.edit(content = f"Failed to close db because of \n{e}")
         await asyncio.sleep(2)
         await msg.edit(content =  "Done!")
+    
+    @commands.command(name="shd")
+    @commands.is_owner()
+    async def shd(self, ctx):
+        await ctx.send("Bot shutting down...")
+        await self.bot.logout()
 
 
 

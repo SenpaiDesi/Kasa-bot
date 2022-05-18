@@ -31,7 +31,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
     print(Fore.LIGHTBLUE_EX + "Bot online and fully loaded.")
-
+    print(token["invite_uri"])
 
 
 
