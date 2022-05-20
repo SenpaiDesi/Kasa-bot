@@ -39,9 +39,9 @@ class channelmoderation(commands.Cog):
 
         
         try:
-            staff_role = await ctx.guild.create_role(name="Staff", color = discord.Color.gold(), permissions =perms.staff_permissions, position=1 )
-            member_role = await ctx.guild.create_role(name="member", color = discord.Color.blue(), permissions = perms.member_roles, position=5)
-            welcome_cat =  await ctx.guild.create_category_channel(name="Welcome", position=0)
+            staff_role = await ctx.guild.create_role(name="Staff", color = discord.Color.gold(), permissions =perms.staff_permissions, hoist=True )
+            member_role = await ctx.guild.create_role(name="member", color = discord.Color.blue(), permissions = perms.member_roles, hoist=True)
+            welcome_cat =  await ctx.guild.create_category_channel(name="Welcome", position=0,)
             welcome_channel1 = await ctx.guild.create_text_channel(name="Welcome-goodbye", category = welcome_cat)
             welcome_channel2 = await ctx.guild.create_text_channel(name="Rules", category = welcome_cat)
             welcome_channel3 = await ctx.guild.create_text_channel(name="Roles", category = welcome_cat)
@@ -54,7 +54,69 @@ class channelmoderation(commands.Cog):
         except Exception as e:
             return await ctx.send(e)
 
-
+    @commands.command(name="delserver")
+    @commands.has_permissions(manage_guild=True)
+    async def delserver(self, ctx):
+        welcome_cat = discord.utils.get(ctx.guild.categories, name = "Welcome")
+        welcome_channel1 = discord.utils.get(ctx.guild.channels, name="rules")
+        welcome_channel2 = discord.utils.get(ctx.guild.channels, name="roles")
+        welcome_channel3 = discord.utils.get(ctx.guild.channels, name="welcome-goodbye")
+        general_cat = discord.utils.get(ctx.guild.categories, name="General")
+        general_channel1 = discord.utils.get(ctx.guild.channels, name="general-chat")
+        general_channel2 = discord.utils.get(ctx.guild.channels, name="bot-commands")
+        general_channel3 = discord.utils.get(ctx.guild.channels, name="memes")
+        general_voice_channel1 = discord.utils.get(ctx.guild.channels, name="Voice-One")
+        general_voice_channel2 = discord.utils.get(ctx.guild.channels, name="Voice-Two")
+        staff_role = discord.utils.get(ctx.guild.roles, name="Staff")
+        member_role = discord.utils.get(ctx.guild.roles, name="member")
+        try:
+            await welcome_cat.delete()
+        except AttributeError:
+            pass
+        try:
+            await welcome_channel1.delete()
+        except AttributeError:
+            pass
+        try:
+            await welcome_channel2.delete()
+        except AttributeError:
+            pass
+        try:
+            await welcome_channel3.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_cat.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_channel1.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_channel2.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_channel3.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_voice_channel1.delete()
+        except AttributeError:
+            pass
+        try:
+            await general_voice_channel2.delete()
+        except AttributeError:
+            pass
+        try:
+            await member_role.delete()
+        except AttributeError:
+            pass
+        try:
+            await staff_role.delete()
+        except AttributeError:
+            pass
 
 
 
