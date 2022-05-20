@@ -21,6 +21,7 @@ intents.guilds=True
 
 bot = commands.Bot(command_prefix="kasa-", case_insensitive = True, intents = intents)
 token = utilities.read_json(assets.json_path)
+bot.remove_command('help')
 
 if __name__ == "__main__":
     for extension in tqdm(assets.extensions, desc = "Loading extensions", unit = "Ex"):

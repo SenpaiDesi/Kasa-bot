@@ -151,6 +151,7 @@ class Moderation(commands.Cog):
     @commands.command(name="modlogs")
     @commands.has_permissions(kick_members = True)
     async def modlogs (self, ctx, member : discord.Member = None):
+        """Check the logs of an user. Example: kasa-modlogs @Senpai_Desi#4108"""
         db = await aiosqlite.connect("./database.db")
         embed =discord.Embed(title = f"Showing logs for {member.id}", description="___ ___", color = discord.Color.dark_blue())
         msg = await ctx.send(embed = embed)
@@ -183,46 +184,48 @@ class Moderation(commands.Cog):
         
         role_to_remove = []
         log_counter()
-        if not role:
-            await ctx.guild.create_role(name="Muted")
-            for channel in ctx.guild.channels:
-                await channel.set_permissions(role, speak=False, send_messages=False, read_message_history=True, read_messages=False)
         try:
-            if member is not None:
-                if time is not None:
-                    await member.edit(roles = [])
-                    await member.add_roles(role)
-                    await db.execute("INSERT INTO moderationLogs (logid, guildid, moderationLogTypes, userid, moduserid, content, duration) VALUES(?, ?, ?, ?, ?, ?, ?)",(new_case, ctx.guild.id, 2, member.id, ctx.author.id, reason, args))
-                    await db.commit()
-                    await asyncio.sleep(2)
-                    await db.close()
-                    embed = discord.Embed(title="Muted", description=f"Muted {member.name}#{member.discriminator}", color  = discord.Color.green())
-                    try:
-                        await member.send(f"You got muted in **{ctx.guild.name}** for {reason} and lasts {args}.")
-                    except discord.errors.Forbidden:
-                        return await ctx.send(f"Logged mute, could not dm <@{member.id}>")
-                    await asyncio.sleep(time)
-                    await member.remove_roles(role)
+            if not role:
+                await ctx.guild.create_role(name="Muted")
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(role, speak=False, send_messages=False, read_message_history=True, read_messages=False)
+            try:
+                if member is not None:
+                    if time is not None:
+                        await member.edit(roles = [])
+                        await member.add_roles(role)
+                        await db.execute("INSERT INTO moderationLogs (logid, guildid, moderationLogTypes, userid, moduserid, content, duration) VALUES(?, ?, ?, ?, ?, ?, ?)",(new_case, ctx.guild.id, 2, member.id, ctx.author.id, reason, args))
+                        await db.commit()
+                        await asyncio.sleep(2)
+                        await db.close()
+                        embed = discord.Embed(title="Muted", description=f"Muted {member.name}#{member.discriminator}", color  = discord.Color.green())
+                        try:
+                            await member.send(f"You got muted in **{ctx.guild.name}** for {reason} and lasts {args}.")
+                        except discord.errors.Forbidden:
+                            return await ctx.send(f"Logged mute, could not dm <@{member.id}>")
+                        await asyncio.sleep(time)
+                        await member.remove_roles(role)
+                    else:
+                        await member.edit(roles = [])
+                        await member.add_roles(role)
+                        await db.execute("INSERT INTO moderationLogs (logid, guildid, moderationLogTypes, userid, moduserid, content, duration) VALUES(?, ?, ?, ?, ?, ?, ?)",(new_case, ctx.guild.id, 2, member.id, ctx.author.id, reason, args))
+                        await db.commit()
+                        await asyncio.sleep(2)
+                        await db.close()
+                        embed = discord.Embed(title="Muted", description=f"Muted {member.name}#{member.discriminator}", color  = discord.Color.green())
+                        try:
+                            await member.send(f"You got muted in **{ctx.guild.name}** for {reason} and is permanent.")
+                        except discord.errors.Forbidden:
+                            return await ctx.send(f"Logged mute, could not dm <@{member.id}>")
                 else:
-                    await member.edit(roles = [])
-                    await member.add_roles(role)
-                    await db.execute("INSERT INTO moderationLogs (logid, guildid, moderationLogTypes, userid, moduserid, content, duration) VALUES(?, ?, ?, ?, ?, ?, ?)",(new_case, ctx.guild.id, 2, member.id, ctx.author.id, reason, args))
-                    await db.commit()
-                    await asyncio.sleep(2)
-                    await db.close()
-                    embed = discord.Embed(title="Muted", description=f"Muted {member.name}#{member.discriminator}", color  = discord.Color.green())
-                    try:
-                        await member.send(f"You got muted in **{ctx.guild.name}** for {reason} and is permanent.")
-                    except discord.errors.Forbidden:
-                        return await ctx.send(f"Logged mute, could not dm <@{member.id}>")
-            else:
-                if member == ctx.author:
-                    return await ctx.send("You can not mute yourself")
-                elif member == self.bot.user:
-                    return await ctx.send("Sorry You can not mute me")
-        except discord.errors.Forbidden:
-            return await ctx.send("You can't mute this user.")
-
+                    if member == ctx.author:
+                        return await ctx.send("You can not mute yourself")
+                    elif member == self.bot.user:
+                        return await ctx.send("Sorry You can not mute me")
+            except discord.errors.Forbidden:
+                return await ctx.send("You can't mute this user.")
+        except MissingPermissions:
+            return await ctx.send("You do not have the right permissions to use this command.(Manage Messages)")
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
